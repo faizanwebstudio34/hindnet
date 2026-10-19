@@ -1,7 +1,7 @@
 import*as T from"three";
 export function mountScene(el){
 let r;try{r=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"})}catch{return()=>{}}
-r.setPixelRatio(Math.min(devicePixelRatio,2));el.append(r.domElement);
+r.setPixelRatio(Math.min(devicePixelRatio,innerWidth<860?1.5:2));el.append(r.domElement);
 const sc=new T.Scene(),cam=new T.PerspectiveCamera(38,1,.1,100);cam.position.set(0,1.6,8.5);cam.lookAt(0,.6,0);
 sc.add(new T.AmbientLight(0xffffff,.8));
 const p1=new T.PointLight(0x5b6bff,90,40);p1.position.set(-4,4,5);sc.add(p1);const p2=new T.PointLight(0x22d3ee,60,40);p2.position.set(5,1,4);sc.add(p2);
@@ -21,7 +21,7 @@ const N=500,pa=new Float32Array(N*3);for(let i=0;i<N*3;i++)pa[i]=(Math.random()-
 const pg=new T.BufferGeometry();pg.setAttribute("position",new T.BufferAttribute(pa,3));const pts=new T.Points(pg,new T.PointsMaterial({color:0x8fa0ff,size:.04,transparent:true,opacity:.7}));sc.add(pts);
 let mx=0,my=0,run=true,id;const t0=performance.now();
 const mm=e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5};addEventListener("pointermove",mm);
-const rz=()=>{const w=el.clientWidth||1,h=el.clientHeight||1;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};rz();const ro=new ResizeObserver(rz);ro.observe(el);
+const rz=()=>{const w=el.clientWidth||1,h=el.clientHeight||1;r.setSize(w,h,false);cam.aspect=w/h;cam.position.z=cam.aspect<1.3?11:8.5;cam.updateProjectionMatrix()};rz();const ro=new ResizeObserver(rz);ro.observe(el);
 const io=new IntersectionObserver(([e])=>{const was=run;run=e.isIntersecting;if(run&&!was)loop()});io.observe(el);
 function loop(){if(!run)return;id=requestAnimationFrame(loop);const t=(performance.now()-t0)/1000,k=Math.min(t/2.4,1),ez=1-Math.pow(1-k,3);
 lid.rotation.x=Math.PI/2*(1-ez)-.22*ez;g.rotation.y+=((mx*.9-.35)-g.rotation.y)*.05;g.rotation.x+=(my*.3-g.rotation.x)*.05;g.position.y=-.4+Math.sin(t*1.2)*.12;

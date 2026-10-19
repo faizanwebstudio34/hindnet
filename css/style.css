@@ -44,5 +44,38 @@ input,select,textarea{width:100%;padding:14px;border-radius:12px;border:1px soli
 iframe{width:100%;height:100%;min-height:340px;border:0;border-radius:var(--r)}
 #toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,90px);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:99px;transition:.4s;z-index:99}#toast.on{transform:translate(-50%,0)}
 footer{text-align:center;color:var(--mut);padding:30px;border-top:1px solid var(--ln)}
-@media(max-width:860px){.hero{grid-template-columns:1fr;min-height:auto}#stage{order:-1;height:340px}nav{flex-wrap:wrap}.links{order:3;flex-basis:100%}main{padding-top:130px}.two{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto}.rv{opacity:1;transform:none}}
+
+/* ===== Left sidebar menu (desktop) ===== */
+#top,#scrim{display:none}
+nav{inset:0 auto 0 0;width:264px;flex-direction:column;align-items:stretch;gap:6px;padding:22px 16px;border-right:1px solid var(--ln);border-bottom:0;background:color-mix(in srgb,var(--bg) 90%,var(--card));overflow-y:auto;z-index:60}
+nav .logo{padding:4px 12px 18px;font-size:28px}
+.links{flex-direction:column;overflow:visible;flex:1;gap:4px}
+.links a,.nfoot .ib{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;font-size:15px;text-align:left;width:100%;min-height:48px}
+.links a i,.nfoot .ib i{font-style:normal;width:32px;height:32px;flex:none;display:grid;place-items:center;border-radius:10px;background:var(--ln);transition:.25s}
+.links a:hover i,.links a.on i{background:var(--ac)}
+.links a.on{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ink);box-shadow:inset 3px 0 0 var(--ac)}
+.nfoot{display:grid;gap:6px;padding-top:14px;border-top:1px solid var(--ln)}.nfoot .btn{display:block;text-align:center;padding:13px}
+main{margin:0 0 0 264px;padding:48px clamp(20px,4vw,56px) 70px;max-width:1320px}footer{margin-left:264px}
+.btn{min-height:44px;line-height:1.4}.btn.sm{min-height:38px}
+/* ===== Mobile: slide-in left drawer ===== */
+@media(max-width:1100px){
+#top{display:flex;position:fixed;inset:0 0 auto;z-index:55;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--ln)}
+#top .logo{font-size:22px;text-decoration:none;color:var(--ink)}
+#top button{width:44px;height:44px;border-radius:14px;border:1px solid var(--ln);background:var(--card);color:var(--ink);font-size:20px;cursor:pointer;transition:transform .2s}#top button:active{transform:scale(.92)}
+nav{transform:translateX(-104%);transition:transform .38s cubic-bezier(.2,.8,.2,1);width:min(84vw,320px);box-shadow:24px 0 70px #0009;padding-top:calc(22px + env(safe-area-inset-top));padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+body.nav-open nav{transform:none}
+#scrim{display:block;position:fixed;inset:0;background:#0009;backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:58}
+body.nav-open #scrim{opacity:1;pointer-events:auto}body.nav-open{overflow:hidden}
+main{margin:0;padding:84px 18px 50px;max-width:none}footer{margin:0}
+.hero{grid-template-columns:1fr;min-height:auto;gap:0}#stage{order:-1;height:310px;min-height:0;margin:0 -8px}
+.hero h1{font-size:clamp(34px,10.5vw,54px)}.lead{font-size:16px;margin:14px 0 22px}.ph{font-size:clamp(36px,11vw,56px)}h2{margin:44px 0 18px}
+.stats{gap:22px 34px}.stats b{font-size:38px}.mq span{font-size:24px}.mq i{margin:0 24px}
+.g{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}.g.rv{grid-template-columns:1fr}
+.b{padding:12px}.b h3{font-size:16px;margin-bottom:8px}.chips i{font-size:11px;padding:2px 8px}
+.row{flex-direction:column;align-items:flex-start;gap:10px}.row b{font-size:19px}.row .btn{width:100%;text-align:center}
+.art span{font-size:3.4rem}.tile{min-height:150px;padding:20px}.tile big{font-size:2.6rem}
+.cta{padding:40px 22px;margin-top:50px}.pn{padding:22px;margin:14px auto}
+.chipbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px}.ch{white-space:nowrap;min-height:40px}
+.gl{columns:2 140px;gap:10px}.gi{margin-bottom:10px}#toast{bottom:calc(20px + env(safe-area-inset-bottom));width:max-content;max-width:90vw}}
+@media(max-width:600px){.two{grid-template-columns:1fr}.bar input{min-width:100%}}
