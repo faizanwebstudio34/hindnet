@@ -1,0 +1,6 @@
+import{CFG,esc,$,add,toast}from"../core.js";
+export default async()=>`<h1 class="ph">Connect</h1><p class="lead">Questions about a product or a booking? Reach out any time.</p>
+<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))"><div class="card b"><h3>${esc(CFG.phone)}</h3><p class="m">${esc(CFG.mail)}</p><p>${esc(CFG.addr)}</p><p class="m">${esc(CFG.hours)}</p><p><a class="btn p sm" target="_blank" rel="noopener" href="https://wa.me/${CFG.wa}">Chat on WhatsApp</a></p></div>
+<iframe loading="lazy" title="Store location" src="https://maps.google.com/maps?q=${encodeURIComponent(CFG.addr)}&output=embed"></iframe></div>
+<h2>Send us a message</h2><div class="pn wide" style="margin-left:0"><form id="mf"><div class="two"><input name="name" placeholder="Your name" required><input name="email" type="email" placeholder="Your email" required></div><textarea name="message" placeholder="How can we help?" required maxlength="900"></textarea><button class="btn p">Send message</button></form></div>`;
+export const mount=()=>{const f=$("#mf");f.onsubmit=async e=>{e.preventDefault();const v=f.elements;try{await add("messages",{name:v.name.value,email:v.email.value,message:v.message.value});f.reset();toast("Message sent. Thank you!")}catch{toast("Could not send. Please try again.")}}};
