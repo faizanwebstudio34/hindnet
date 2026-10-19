@@ -1,30 +1,32 @@
 import*as T from"three";
+import{RoundedBoxGeometry}from"three/addons/geometries/RoundedBoxGeometry.js";
+import{RoomEnvironment}from"three/addons/environments/RoomEnvironment.js";
+import{GLTFLoader}from"three/addons/loaders/GLTFLoader.js";
 export function mountScene(el){
 let r;try{r=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"})}catch{return()=>{}}
-r.setPixelRatio(Math.min(devicePixelRatio,innerWidth<860?1.5:2));el.append(r.domElement);
-const sc=new T.Scene(),cam=new T.PerspectiveCamera(38,1,.1,100);cam.position.set(0,1.6,8.5);cam.lookAt(0,.6,0);
-sc.add(new T.AmbientLight(0xffffff,.8));
-const p1=new T.PointLight(0x5b6bff,90,40);p1.position.set(-4,4,5);sc.add(p1);const p2=new T.PointLight(0x22d3ee,60,40);p2.position.set(5,1,4);sc.add(p2);
-const M=(c,o={})=>new T.MeshStandardMaterial({color:c,metalness:.85,roughness:.28,...o}),g=new T.Group();sc.add(g);
-g.add(new T.Mesh(new T.BoxGeometry(3.4,.14,2.3),M(0x9ca5ba)));
-const keys=new T.InstancedMesh(new T.BoxGeometry(.2,.05,.2),M(0x1b2133),65),d=new T.Object3D();
-for(let i=0;i<65;i++){d.position.set(-1.35+(i%13)*.225,.1,-.7+Math.floor(i/13)*.24);d.updateMatrix();keys.setMatrixAt(i,d.matrix)}g.add(keys);
-const pad=new T.Mesh(new T.BoxGeometry(1,.02,.6),M(0x6b738a));pad.position.set(0,.08,.8);g.add(pad);
-const lid=new T.Group();lid.position.set(0,.07,-1.15);g.add(lid);
-const lm=new T.Mesh(new T.BoxGeometry(3.4,2.2,.09),M(0x161c2c));lm.position.y=1.1;lid.add(lm);
-const cv=document.createElement("canvas");cv.width=640;cv.height=400;const x=cv.getContext("2d"),gr=x.createLinearGradient(0,0,640,400);
-gr.addColorStop(0,"#1b2a6b");gr.addColorStop(1,"#0e7490");x.fillStyle=gr;x.fillRect(0,0,640,400);x.fillStyle="#fff";x.font="800 76px sans-serif";x.fillText("Hindnet",48,200);
-x.font="28px sans-serif";x.globalAlpha=.75;x.fillText("Premium laptops, gear & travel",52,250);x.globalAlpha=.25;for(let i=0;i<4;i++)x.fillRect(52,300+i*22,200+i*90,8);
-const sm=new T.Mesh(new T.PlaneGeometry(3.15,1.97),new T.MeshBasicMaterial({map:new T.CanvasTexture(cv)}));sm.position.set(0,1.1,.05);lid.add(sm);
-const fl=[[new T.IcosahedronGeometry(.45),-3.6,1.8,-1],[new T.TorusGeometry(.4,.14,16,40),3.7,2.2,-.5],[new T.OctahedronGeometry(.38),3.4,-.6,1],[new T.TorusKnotGeometry(.28,.09,80,12),-3.4,-.4,1.2]].map(([geo,px,py,pz],i)=>{const m=new T.Mesh(geo,M(i%2?0x22d3ee:0x5b6bff,{wireframe:i%2==0,emissive:0x111a55}));m.position.set(px,py,pz);sc.add(m);return m});
-const N=500,pa=new Float32Array(N*3);for(let i=0;i<N*3;i++)pa[i]=(Math.random()-.5)*16;
-const pg=new T.BufferGeometry();pg.setAttribute("position",new T.BufferAttribute(pa,3));const pts=new T.Points(pg,new T.PointsMaterial({color:0x8fa0ff,size:.04,transparent:true,opacity:.7}));sc.add(pts);
-let mx=0,my=0,run=true,id;const t0=performance.now();
-const mm=e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5};addEventListener("pointermove",mm);
-const rz=()=>{const w=el.clientWidth||1,h=el.clientHeight||1;r.setSize(w,h,false);cam.aspect=w/h;cam.position.z=cam.aspect<1.3?11:8.5;cam.updateProjectionMatrix()};rz();const ro=new ResizeObserver(rz);ro.observe(el);
-const io=new IntersectionObserver(([e])=>{const was=run;run=e.isIntersecting;if(run&&!was)loop()});io.observe(el);
-function loop(){if(!run)return;id=requestAnimationFrame(loop);const t=(performance.now()-t0)/1000,k=Math.min(t/2.4,1),ez=1-Math.pow(1-k,3);
-lid.rotation.x=Math.PI/2*(1-ez)-.22*ez;g.rotation.y+=((mx*.9-.35)-g.rotation.y)*.05;g.rotation.x+=(my*.3-g.rotation.x)*.05;g.position.y=-.4+Math.sin(t*1.2)*.12;
-fl.forEach((m,i)=>{m.rotation.x+=.008+i*.002;m.rotation.y+=.01;m.position.y+=Math.sin(t+i)*.002});pts.rotation.y=t*.02;r.render(sc,cam)}
-loop();
-return()=>{run=false;cancelAnimationFrame(id);removeEventListener("pointermove",mm);ro.disconnect();io.disconnect();r.dispose();r.domElement.remove()}}
+r.setPixelRatio(Math.min(devicePixelRatio,innerWidth<860?1.5:2));r.toneMapping=T.ACESFilmicToneMapping;r.toneMappingExposure=1.1;el.append(r.domElement);
+const sc=new T.Scene(),cam=new T.PerspectiveCamera(30,1,.1,100);sc.environment=new T.PMREMGenerator(r).fromScene(new RoomEnvironment(),.04).texture;
+const kl=new T.DirectionalLight(0xffffff,1.4);kl.position.set(3,5,4);sc.add(kl);
+const P=(c,m,ro,o={})=>new T.MeshPhysicalMaterial({color:c,metalness:m,roughness:ro,...o}),al=P(0xcfd2d9,1,.3,{clearcoat:.4}),dk=P(0x14161b,.5,.5),RB=(w,h,d,s,rad)=>new RoundedBoxGeometry(w,h,d,s,rad);
+const g=new T.Group(),m=new T.Group();g.add(m);sc.add(g);
+m.add(new T.Mesh(RB(3.4,.1,2.3,5,.045),al));
+const deck=new T.Mesh(RB(3.1,.02,1.25,2,.01),dk);deck.position.set(0,.055,-.35);m.add(deck);
+const keys=new T.InstancedMesh(RB(.19,.03,.19,2,.02),P(0x2a2d35,.4,.6),70),d=new T.Object3D();
+for(let i=0;i<70;i++){d.position.set(-1.4+(i%14)*.215,.08,-.8+Math.floor(i/14)*.23);d.updateMatrix();keys.setMatrixAt(i,d.matrix)}m.add(keys);
+const tp=new T.Mesh(RB(1.15,.012,.72,2,.01),P(0xaeb2bb,1,.35));tp.position.set(0,.056,.72);m.add(tp);
+const lid=new T.Group();lid.position.set(0,.06,-1.12);m.add(lid);
+const lm=new T.Mesh(RB(3.4,2.2,.06,5,.03),al);lm.position.y=1.1;lid.add(lm);
+const bz=new T.Mesh(new T.PlaneGeometry(3.3,2.1),new T.MeshBasicMaterial({color:0x050506}));bz.position.set(0,1.1,.032);lid.add(bz);
+const cv=document.createElement("canvas");cv.width=1280;cv.height=800;const x=cv.getContext("2d");x.fillStyle="#0b1026";x.fillRect(0,0,1280,800);
+[[300,260,520,"#2f5bff"],[980,200,460,"#7b3cff"],[760,640,520,"#00b7ff"],[200,700,380,"#ff4fa3"]].forEach(([a,b,rad,c])=>{const q=x.createRadialGradient(a,b,0,a,b,rad);q.addColorStop(0,c+"cc");q.addColorStop(1,c+"00");x.fillStyle=q;x.fillRect(0,0,1280,800)});
+x.fillStyle="#ffffff22";x.fillRect(0,0,1280,34);x.fillStyle="#fff";x.font="700 120px Inter,sans-serif";x.textAlign="center";x.fillText("Hindnet",640,430);x.font="400 34px Inter,sans-serif";x.globalAlpha=.8;x.fillText("Laptops. Gear. Travel.",640,490);
+const scr=new T.Mesh(new T.PlaneGeometry(3.2,2),new T.MeshBasicMaterial({map:Object.assign(new T.CanvasTexture(cv),{colorSpace:T.SRGBColorSpace})}));scr.position.set(0,1.1,.034);lid.add(scr);
+const sh=document.createElement("canvas");sh.width=sh.height=256;const sx=sh.getContext("2d"),sg=sx.createRadialGradient(128,128,0,128,128,128);sg.addColorStop(0,"#000a");sg.addColorStop(1,"#0000");sx.fillStyle=sg;sx.fillRect(0,0,256,256);
+const shd=new T.Mesh(new T.PlaneGeometry(6.4,4.6),new T.MeshBasicMaterial({map:new T.CanvasTexture(sh),transparent:true,depthWrite:false}));shd.rotation.x=-Math.PI/2;shd.position.y=-.06;g.add(shd);
+new GLTFLoader().load("models/laptop.glb",gl=>{m.visible=false;const o=gl.scene,b=new T.Box3().setFromObject(o),s=3.4/(b.max.x-b.min.x);o.scale.setScalar(s);b.setFromObject(o);o.position.sub(b.getCenter(new T.Vector3()));o.position.y+=(b.max.y-b.min.y)/2;g.add(o)},undefined,()=>{});
+let mx=0,my=0,run=true,id;const t0=performance.now(),mm=e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5};addEventListener("pointermove",mm);
+const rz=()=>{const w=el.clientWidth||1,h=el.clientHeight||1;r.setSize(w,h,false);cam.aspect=w/h;const t=Math.tan(T.MathUtils.degToRad(15)),dd=Math.max(1.75/t,2.45/(t*cam.aspect))*1.12;cam.position.set(0,1.1,dd);cam.lookAt(0,.75,0);cam.updateProjectionMatrix()};rz();
+const ro=new ResizeObserver(rz);ro.observe(el);const io=new IntersectionObserver(([e])=>{const w=run;run=e.isIntersecting;if(run&&!w)loop()});io.observe(el);
+function loop(){if(!run)return;id=requestAnimationFrame(loop);const t=(performance.now()-t0)/1000,k=Math.min(t/2.6,1),ez=1-Math.pow(1-k,4),sp=Math.min(1,scrollY/(innerHeight*.8));
+lid.rotation.x=Math.PI/2*(1-ez)-.2*ez;g.rotation.y+=((-.5+sp*1.1+mx*.5+Math.sin(t*.4)*.06)-g.rotation.y)*.06;g.rotation.x+=((.12-sp*.1+my*.12)-g.rotation.x)*.06;g.position.y=Math.sin(t*1.1)*.04;g.scale.setScalar(1+sp*.12);r.render(sc,cam)}
+loop();return()=>{run=false;cancelAnimationFrame(id);removeEventListener("pointermove",mm);ro.disconnect();io.disconnect();r.dispose();r.domElement.remove()}}

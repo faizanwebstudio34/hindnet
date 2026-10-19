@@ -14,8 +14,10 @@ export const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on")
 const cache={};
 export async function list(c){if(cache[c])return cache[c];let r=[];
 try{r=(await Promise.race([getDocs(query(collection(db,c),orderBy("at","desc"))),new Promise((_,j)=>setTimeout(j,3500))])).docs.map(d=>({id:d.id,...d.data()}))}catch{}
-return cache[c]=r.length?r:(SAMPLES[c]||[]).map(x=>({...x,sample:1}))}
+return cache[c]=(r.length?r:(SAMPLES[c]||[]).map((x,i)=>({...x,id:"s"+i,sample:1,mrp:x.price?Math.round(x.price*1.12/100)*100:0}))).map(x=>({...x,_c:c}))}
 export const add=(c,d)=>addDoc(collection(db,c),{...d,at:Date.now()});
 export const price=p=>Number(p)?"₹"+Number(p).toLocaleString("en-IN"):esc(p);
-export const art=x=>x.img?`<img loading="lazy" src="${esc(x.img)}" alt="${esc(x.name||x.caption)}">`:`<div class="art" style="--h:${+x.hue||240}"><span>${x.icon||"💻"}</span></div>`;
-export const card=x=>`<article class="card tilt"><div class="media">${art(x)}${x.sample?'<em class="bdg">Demo</em>':""}</div><div class="b"><small>${esc(x.brand)}</small><h3>${esc(x.name)}</h3><div class="chips">${String(x.specs||"").split("|").filter(s=>s.trim()).map(s=>`<i>${esc(s.trim())}</i>`).join("")}</div><div class="row"><b>${price(x.price)}</b><a class="btn p sm" target="_blank" rel="noopener" href="https://wa.me/${CFG.wa}?text=${encodeURIComponent("Hi Hindnet, I'm interested in "+x.name)}">Enquire</a></div></div></article>`;
+export const art=x=>{const i=x.images?.[0]||x.img;return i?`<img loading="lazy" src="${esc(i)}" alt="${esc(x.name||x.caption)}">`:`<div class="art" style="--h:${+x.hue||240}"><b>${esc(x.brand||x.caption)}</b><span>${esc(x.name||"")}</span></div>`};
+export const card=x=>{const o=x.mrp>x.price?Math.round((1-x.price/x.mrp)*100):0;return`<a class="card tilt" href="#/product/${x._c}/${x.id}"><div class="media">${art(x)}${x.sample?'<em class="bdg">Demo</em>':""}${o?`<em class="bdg r">${o}% off</em>`:""}</div><div class="b"><small>${esc(x.brand)}</small><h3>${esc(x.name)}</h3><div class="chips">${String(x.specs||"").split("|").filter(s=>s.trim()).slice(0,3).map(s=>`<i>${esc(s.trim())}</i>`).join("")}</div><div class="row"><b>${price(x.price)}</b><span class="btn p sm">View</span></div></div></a>`};
+export const get=async(c,i)=>(await list(c)).find(x=>x.id==i);
+export const stars=n=>"★".repeat(n)+"☆".repeat(5-n);
