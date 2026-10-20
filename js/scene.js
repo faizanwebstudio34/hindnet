@@ -1,8 +1,7 @@
 import*as T from"three";
 import{RoundedBoxGeometry}from"three/addons/geometries/RoundedBoxGeometry.js";
 import{RoomEnvironment}from"three/addons/environments/RoomEnvironment.js";
-import{GLTFLoader}from"three/addons/loaders/GLTFLoader.js";
-export function mountScene(el){
+export function mountScene(el,model){
 let r;try{r=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"})}catch{return()=>{}}
 r.setPixelRatio(Math.min(devicePixelRatio,innerWidth<860?1.5:2));r.toneMapping=T.ACESFilmicToneMapping;r.toneMappingExposure=1.1;el.append(r.domElement);
 const sc=new T.Scene(),cam=new T.PerspectiveCamera(30,1,.1,100);sc.environment=new T.PMREMGenerator(r).fromScene(new RoomEnvironment(),.04).texture;
@@ -23,7 +22,7 @@ x.fillStyle="#ffffff22";x.fillRect(0,0,1280,34);x.fillStyle="#fff";x.font="700 1
 const scr=new T.Mesh(new T.PlaneGeometry(3.2,2),new T.MeshBasicMaterial({map:Object.assign(new T.CanvasTexture(cv),{colorSpace:T.SRGBColorSpace})}));scr.position.set(0,1.1,.034);lid.add(scr);
 const sh=document.createElement("canvas");sh.width=sh.height=256;const sx=sh.getContext("2d"),sg=sx.createRadialGradient(128,128,0,128,128,128);sg.addColorStop(0,"#000a");sg.addColorStop(1,"#0000");sx.fillStyle=sg;sx.fillRect(0,0,256,256);
 const shd=new T.Mesh(new T.PlaneGeometry(6.4,4.6),new T.MeshBasicMaterial({map:new T.CanvasTexture(sh),transparent:true,depthWrite:false}));shd.rotation.x=-Math.PI/2;shd.position.y=-.06;g.add(shd);
-new GLTFLoader().load("models/laptop.glb",gl=>{m.visible=false;const o=gl.scene,b=new T.Box3().setFromObject(o),s=3.4/(b.max.x-b.min.x);o.scale.setScalar(s);b.setFromObject(o);o.position.sub(b.getCenter(new T.Vector3()));o.position.y+=(b.max.y-b.min.y)/2;g.add(o)},undefined,()=>{});
+model&&import("three/addons/loaders/GLTFLoader.js").then(({GLTFLoader})=>new GLTFLoader().load(model,gl=>{m.visible=false;const o=gl.scene,b=new T.Box3().setFromObject(o),s=3.4/(b.max.x-b.min.x);o.scale.setScalar(s);b.setFromObject(o);o.position.sub(b.getCenter(new T.Vector3()));o.position.y+=(b.max.y-b.min.y)/2;g.add(o)},undefined,()=>{}));
 let mx=0,my=0,run=true,id;const t0=performance.now(),mm=e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5};addEventListener("pointermove",mm);
 const rz=()=>{const w=el.clientWidth||1,h=el.clientHeight||1;r.setSize(w,h,false);cam.aspect=w/h;const t=Math.tan(T.MathUtils.degToRad(15)),dd=Math.max(1.75/t,2.45/(t*cam.aspect))*1.12;cam.position.set(0,1.1,dd);cam.lookAt(0,.75,0);cam.updateProjectionMatrix()};rz();
 const ro=new ResizeObserver(rz);ro.observe(el);const io=new IntersectionObserver(([e])=>{const w=run;run=e.isIntersecting;if(run&&!w)loop()});io.observe(el);
