@@ -12,10 +12,11 @@ addEventListener("hashchange",render);addEventListener("rerender",render);addEve
 const th=()=>{S.t=document.documentElement.dataset.theme=="dark"?"light":"dark";save();applyPrefs()};$("#tg").onclick=$("#tg2").onclick=th;
 const nv=o=>{document.body.classList.toggle("nav-open",o);$("#mn").setAttribute("aria-expanded",o)};
 $("#mn").onclick=()=>nv(!document.body.classList.contains("nav-open"));$("#scrim").onclick=()=>nv(false);
-$("#side").addEventListener("click",e=>{if(e.target.closest("a"))nv(false)});addEventListener("hashchange",()=>nv(false));addEventListener("keydown",e=>e.key=="Escape"&&nv(false));
+$("#side").addEventListener("click",e=>{if(e.target.closest("a"))nv(false)});addEventListener("hashchange",()=>nv(false));addEventListener("keydown",e=>e.key=="Escape"&&nv(false));$("#cl").onclick=()=>nv(false);
+const sp=()=>{const t=$("#top");t.classList.toggle("sc",scrollY>10);t.style.setProperty("--p",Math.min(1,scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)))};addEventListener("scroll",sp,{passive:true});sp();
 document.addEventListener("pointermove",e=>{const c=e.target.closest?.(".tilt");if(!c||S.a===0||e.pointerType!="mouse")return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*9}deg) translateY(-6px)`});
 document.addEventListener("pointerout",e=>{const c=e.target.closest?.(".tilt");if(c&&!c.contains(e.relatedTarget))c.style.transform=""});
 document.addEventListener("click",e=>{const g=e.target.closest(".gi");if(g){$("#lb").innerHTML=g.innerHTML;$("#lb").classList.add("on")}else if(e.target.closest("#lb"))$("#lb").classList.remove("on")});
 addEventListener("keydown",e=>e.key=="Escape"&&$("#lb").classList.remove("on"));
-onAuthStateChanged(auth,u=>{X.user=u;$("#mb").textContent=u?(u.displayName||"Account").split(" ")[0]:"Member Access";if(cur=="account")render()});
+onAuthStateChanged(auth,u=>{X.user=u;$("#mb").textContent=u?(u.displayName||"Account").split(" ")[0]:"Member Access";if(cur=="account"||cur=="reviews")render(cur=="reviews")});
 render();
