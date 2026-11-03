@@ -9,7 +9,7 @@ export const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.query
 export const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 export const S=(()=>{try{return JSON.parse(localStorage.hn||"{}")}catch{return{}}})();
 export const save=()=>{try{localStorage.hn=JSON.stringify(S)}catch{}};
-export const applyPrefs=()=>{const t=S.t||"dark";document.documentElement.dataset.theme=t=="auto"?(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark"):t;document.body.classList.toggle("noanim",S.a===0)};
+export const applyPrefs=()=>{const t=S.t||"light";document.documentElement.dataset.theme=t=="auto"?(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark"):t;document.body.classList.toggle("noanim",S.a===0)};
 export const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),3200)};
 const mem={},fe={},rd={},raw={},dec=(c,r)=>(r.length?r:(SAMPLES[c]||[]).map((x,i)=>({...x,id:"s"+i,sample:1,mrp:x.price?Math.round(x.price*1.12/100)*100:0}))).map(x=>({...x,_c:c}));
 export function list(c){if(!mem[c]){let s="[]";try{s=localStorage["hn_"+c]||"[]"}catch{}raw[c]=s;try{mem[c]=dec(c,JSON.parse(s))}catch{mem[c]=dec(c,[])}}if(!fe[c])refresh(c);return mem[c]}
