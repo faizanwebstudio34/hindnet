@@ -1,0 +1,5 @@
+const K="AIzaSyAcKFw1IKx9BAcQUfX4Vg75Pr8vzCfTH1s",B="https://firestore.googleapis.com/v1/projects/hindnetweb/databases/(default)/documents";
+module.exports=async(req,res)=>{const o="https://"+(req.headers["x-forwarded-host"]||req.headers.host),u=[["/","1.0"],["/laptops","0.9"],["/accessories","0.9"],["/travel","0.8"],["/reviews","0.7"],["/gallery","0.6"],["/contact","0.7"]].map(([p,pr])=>({p,pr}));
+for(const c of["laptops","accessories"])try{const r=await(await fetch(`${B}/${c}?pageSize=300&mask.fieldPaths=brand&key=${K}`)).json();(r.documents||[]).forEach(d=>u.push({p:`/product/${c}/${d.name.split("/").pop()}`,pr:"0.8",t:d.updateTime}))}catch{}
+res.setHeader("Content-Type","application/xml; charset=utf-8");res.setHeader("Cache-Control","s-maxage=3600, stale-while-revalidate=86400");
+res.send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${u.map(x=>`<url><loc>${o}${x.p}</loc>${x.t?`<lastmod>${x.t}</lastmod>`:""}<priority>${x.pr}</priority></url>`).join("")}</urlset>`)};
