@@ -1,4 +1,4 @@
-import{X,$,$$,add,toast,stars,refresh,liveRev,rcard}from"../core.js";import{REVIEWS}from"../data.js";
+import{X,$,$$,add,toast,stars,refresh,liveRev,rcard}from"core";import{REVIEWS}from"data";
 const LB=["Poor","Fair","Good","Very good","Excellent"];
 export default async()=>{const A=[...liveRev(),...REVIEWS],n=A.length,avg=A.reduce((a,r)=>a+r.rating,0)/n;
 return`<h1 class="ph">Customer Voices</h1><p class="lead">Honest reviews from people who shop with Hindnet.</p>

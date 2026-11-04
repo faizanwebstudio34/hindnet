@@ -1,4 +1,4 @@
-import{S,save,applyPrefs,$$}from"../core.js";
+import{S,save,applyPrefs,$$}from"core";
 const B=(k,v,l,on)=>`<button class="ch${on?" on":""}" data-k="${k}" data-v="${v}">${l}</button>`;
 export default async()=>`<h1 class="ph">Preferences</h1><div class="pn wide"><h3>Theme</h3><div class="chipbar">${[["light","Light"],["dark","Dark"],["auto","Match device"]].map(([v,l])=>B("t",v,l,(S.t||"light")==v)).join("")}</div>
 <h3>Animations</h3><div class="chipbar">${B("a",1,"On",S.a!==0)}${B("a",0,"Off",S.a===0)}</div><h3>3D effects</h3><div class="chipbar">${B("fx",1,"On",S.fx!==0)}${B("fx",0,"Off",S.fx===0)}</div><p class="m">Turn off animations and 3D for the fastest experience on older devices.</p><p><button class="btn sm" id="rs">Reset preferences</button></p></div>`;

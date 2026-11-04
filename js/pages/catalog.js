@@ -1,4 +1,4 @@
-import{list,card,esc,$,$$}from"../core.js";
+import{list,card,esc,$,$$}from"core";
 export const catalog=(title,sub,col)=>{let items=[],f={q:"",b:"All",s:""};
 const grid=()=>{let r=items.filter(x=>(f.b=="All"||x.brand==f.b)&&(x.name+x.brand+x.specs).toLowerCase().includes(f.q));if(f.s)r=[...r].sort((a,b)=>f.s=="lo"?a.price-b.price:b.price-a.price);return r.map(card).join("")||'<p class="m">No matches. Try a different search.</p>'};
 return{page:async()=>{items=await list(col);f={q:"",b:"All",s:""};const bs=["All",...new Set(items.map(x=>x.brand).filter(Boolean))];

@@ -1,4 +1,4 @@
-import{get,list,card,art,esc,price,CFG,media,setSEO,$,$$}from"../core.js";
+import{get,list,card,art,esc,price,CFG,media,setSEO,$,$$}from"core";
 export default async([c,id])=>{const x=await get(c,id);if(!x){setSEO({title:"Product not found | Hindnet",noindex:1});return'<h1 class="ph">Product not found</h1><p><a class="btn p" href="/laptops">Back to store</a></p>'}
 const oos=x.stock!==undefined&&x.stock!==""&&+x.stock===0,sd=`Buy ${x.name} by ${x.brand} at Hindnet. ${String(x.specs||"").replace(/\|/g,",")}. Genuine product with warranty.`;setSEO({title:`${x.name} | ${x.brand} | Hindnet`,desc:sd,noindex:!!x.sample,ld:[{"@context":"https://schema.org","@type":"Product",name:x.name,brand:{"@type":"Brand",name:x.brand},description:sd,offers:{"@type":"Offer",priceCurrency:"INR",price:+x.price,availability:oos?"https://schema.org/OutOfStock":"https://schema.org/InStock",url:location.href}}]});
 const im=(x.images||[x.img]).filter(Boolean),rel=(await list(c)).filter(y=>y.id!=id).slice(0,4),o=x.mrp>x.price?Math.round((1-x.price/x.mrp)*100):0,rows=String(x.table||"").split("\n").map(l=>l.split(/:(.+)/)).filter(a=>a[1]);

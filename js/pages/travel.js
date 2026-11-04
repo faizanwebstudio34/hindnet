@@ -1,4 +1,4 @@
-import{X,$,$$,add,toast,list,go}from"../core.js";
+import{X,$,$$,add,toast,list,go,whenAuth}from"core";
 const C={Train:["Sleeper (SL)","AC 3 Tier (3A)","AC 2 Tier (2A)","AC First (1A)","Chair Car (CC)"],Flight:["Economy","Premium Economy","Business"]},RT=[["Patna","Delhi","Train"],["Delhi","Mumbai","Flight"],["Mumbai","Bengaluru","Flight"],["Kolkata","Patna","Train"],["Delhi","Goa","Flight"]],DS=[["Goa",190,"Beaches and nightlife"],["Jaipur",30,"Palaces and heritage"],["Kerala",150,"Backwaters and calm"],["Manali",210,"Mountains and snow"]],FQ=[["How does booking work?","Send your journey details. Our team checks availability and confirms fare and ticket with you directly."],["Do you charge a service fee?","A small transparent fee applies and is always confirmed before booking. Some offers waive it."],["Can I cancel or change a ticket?","Yes. Contact us as early as possible and we will handle cancellation or changes as per the operator's policy."]];
 export default async()=>{const O=(await list("offers")).filter(o=>/travel/i.test(o.tag)||/flight|train|rail/i.test(o.title));
 return`<h1 class="ph">Travel Lounge</h1><p class="lead">Train and flight tickets, handled by people who care. Send your details and we will confirm. Sign in to send a request.</p>
@@ -11,5 +11,5 @@ ${O.length?`<h2>Travel offers</h2><div class="g">${O.map(o=>`<div class="of"><sm
 <h2>Questions</h2><div class="faq">${FQ.map(([q,a])=>`<details><summary>${q}</summary><p class="m">${a}</p></details>`).join("")}</div>`};
 export const mount=A=>{let t="Train";const f=$("#bf"),v=f.elements,fill=()=>v.cls.innerHTML=C[t].map(c=>`<option>${c}</option>`).join(""),sel=x=>{t=x;$$("[data-t]",A).forEach(b=>b.classList.toggle("on",b.dataset.t==x));fill()};fill();
 $$(".seg [data-t]",A).forEach(b=>b.onclick=()=>sel(b.dataset.t));$$(".r",A).forEach(b=>b.onclick=()=>{sel(b.dataset.t2);v.from.value=b.dataset.a;v.to.value=b.dataset.b;scrollTo({top:0,behavior:"smooth"})});
-f.onsubmit=async e=>{e.preventDefault();if(!X.user){toast("Please sign in first");go("/account");return}
+f.onsubmit=async e=>{e.preventDefault();await whenAuth();if(!X.user){toast("Please sign in first");go("/account");return}
 try{await add("bookings",{type:t,from:v.from.value,to:v.to.value,date:v.date.value,cls:v.cls.value,pax:+v.pax.value,email:X.user.email});$("#er").textContent="Request received. We will contact you shortly.";f.reset();fill()}catch{$("#er").textContent="Could not send the request. Please try again."}}};
